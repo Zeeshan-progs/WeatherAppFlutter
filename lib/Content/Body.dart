@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'Constants.dart';
+import 'package:http/http.dart ' as http;
+import 'dart:convert';
 
 class BodyWidget extends StatefulWidget {
   // create object of class to import its property
@@ -13,6 +15,22 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  var temp;
+  var description;
+  var mode;
+  var url =
+      "api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}";
+  Future getWeather() async {
+    final http.Response response = await http.get(Uri.http(url, ''));
+    print(response);
+  }
+
+  @override
+  void initState() {
+    this.getWeather();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
