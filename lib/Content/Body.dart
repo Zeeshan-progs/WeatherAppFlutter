@@ -15,21 +15,22 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  var temp;
-  var description;
-  var mode;
-  var url =
-      "api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}";
-  Future getWeather() async {
-    final http.Response response = await http.get(Uri.http(url, ''));
-    print(response);
-  }
+  // var temp;
+  // var description;
+  // var mode;
+  // var url =
+  //     "api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}";
+  // Future<http.Response> getWeather() async {
+  //   final http.Response response = await http.get(Uri.https(
+  //       'api.openweathermap.org', '/data/2.5/weather?q={london}&appid={2067d6bf344383017172c07feb57cb62}'));
+  //   print(response);
+  // }
 
-  @override
-  void initState() {
-    this.getWeather();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   this.getWeather();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
