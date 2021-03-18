@@ -1,4 +1,4 @@
-name: weather
+name: dioapi
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -31,11 +31,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  # geolocation: ^1.1.2
+  dio: ^3.0.10 
+  # use latest version for better experence 
   geolocator: ^7.0.1
-  google_fonts: ^2.0.0
-  http: ^0.13.0
   intl: ^0.17.0
+  location: null
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
