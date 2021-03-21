@@ -4,9 +4,7 @@ import 'package:dioapi/Const/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-// lets start with creating a function at fetch data from API
-// in this video we gona see how to use HTTP package
-// last video we have seen how to fetch data from API with dio package
+
 
 class HttpPage extends StatefulWidget {
   @override
@@ -74,16 +72,6 @@ class _HttpPageState extends State<HttpPage> {
 
 
 // thats it for today 
-
-// Like 
-// Subscribe 
-// Share 
-
-
-// CodeWithNix
-
-
-// suggest me for my next video 
 
 
 // thank you 
