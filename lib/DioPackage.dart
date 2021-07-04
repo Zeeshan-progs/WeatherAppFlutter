@@ -1,9 +1,12 @@
 import 'dart:convert';
 
-import 'package:dioapi/Const/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'Content/Constants.dart';
 
+import 'package:geolocator/geolocator.dart';
+
+// hey guys today we are learing that how to get your current location weather using geolocation publication
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -44,8 +47,7 @@ class _HomeState extends State<Home> {
         // API return unfinished link of icon that why we are using
         cacheIcon = data['current']['condition']['icon'].toString();
         src = 'https:' + cacheIcon; // this to combine and get propper icon
-
-        print(data.toString());
+        loading = true;
         // print data into consol
       });
     } on Exception catch (e) {
@@ -53,87 +55,124 @@ class _HomeState extends State<Home> {
     }
   }
 
+// methd to get weather detail using location
+
+  Future getWeatherByLocation(latitude, longitude) async {
+//http://api.openweathermap.org/data/2.5/weather?lat=28.67&lon=77.22&appid=0fe03700518423ac4a10d937dd52aba5
+    String url =
+        'http://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=0fe03700518423ac4a10d937dd52aba5&units=metric';
+    var response = await Dio().get(url);
+    var convert =
+        jsonDecode(response.toString()); // using dio you need only response
+    setState(() {
+      loading = true;
+      location = convert['name'];
+      temp = convert['main']['temp'].round();
+      humidity = convert['main']['humidity'];
+      country = convert['sys']['country'];
+    });
+  }
+
+  TextEditingController controller = TextEditingController();
+//http://api.openweathermap.org/data/2.5/weather?lat=28.67&lon=77.22&appid=0fe03700518423ac4a10d937dd52aba5
 // using init method to initialize our typed location to run at starting time of app
 
+// lets create a method to find current location
+  Future getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    if (position != null) {
+      getWeatherByLocation(position.latitude, position.longitude);
+    }
+  }
+
+  bool loading = false;
   @override
   void initState() {
     super.initState();
     this.getWeather();
+    this.getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     double height = size.height.toDouble();
-    print('===========  Re Created  ==============');
     return Container(
       decoration: BoxDecoration(
         // background color
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          stops: [0.1, 1.6],
           colors: [
             Color(0xff0e1e29),
             Color(0xff5292a4),
           ],
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: buildAppBar(),
-        body: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    child: buildTextField(),
-                    width: size.width / 1.6,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      size: 20,
-                      color: Colors.white,
+      child: loading
+          ? Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: buildAppBar(),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            child: buildTextField(),
+                            width: size.width / 1.6,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.search,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                location = controller.text;
+                                loading = false;
+                              });
+                              getWeather();
+                            },
+                          )
+                        ],
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        location = controller.text;
-                      });
-                      getWeather();
-                    },
-                  )
-                ],
+                    // buildWeatherIcon(),
+                    buildTempField(height),
+                    // buildRowData(
+                    //   data: tempf.toString() + ' f',
+                    //   text: 'Temp in F',
+                    // ),
+                    SizedBox(height: 10),
+                    buildRowData(
+                      data: humidity.toString() + ' %',
+                      text: 'Humidity',
+                    ),
+                    SizedBox(height: 10),
+                    // buildRowData(
+                    //   data: wind.toString() + ' Kph',
+                    //   text: 'Wind',
+                    // ),
+                    SizedBox(height: 10),
+                    Divider(thickness: 2),
+                    SizedBox(height: 10),
+                   
+                  ],
+                ),
               ),
+            )
+          : Scaffold(
+              body: Container(
+                  child: Center(
+                child: CircularProgressIndicator(),
+              )),
             ),
-            buildWeatherIcon(),
-            buildTempField(height),
-            buildRowData(
-              data: tempf.toString() + ' f',
-              icon: 'assets/far.png',
-              text: 'Temp in F',
-            ),
-            SizedBox(height: 10),
-            buildRowData(
-              data: humidity.toString() + ' %',
-              icon: 'assets/humidity.png',
-              text: 'Humidity',
-            ),
-            SizedBox(height: 10),
-            buildRowData(
-              data: wind.toString() + ' Kph',
-              icon: 'assets/wind.png',
-              text: 'Wind',
-            ),
-            SizedBox(height: 10),
-            Divider(thickness: 2),
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
     );
   }
 
@@ -149,7 +188,6 @@ class _HomeState extends State<Home> {
 
 // Data Like Temp in farenheit, wind speed
   Row buildRowData({
-    String icon,
     String text,
     String data,
   }) {
@@ -157,13 +195,6 @@ class _HomeState extends State<Home> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset(
-          icon,
-          height: 40,
-          width: 40,
-          filterQuality: FilterQuality.high,
-          fit: BoxFit.cover,
-        ),
         Text(
           text,
           style: customGrey,
@@ -229,7 +260,7 @@ class _HomeState extends State<Home> {
           onPressed: () {
             setState(() {
               getWeather();
-              // on referesh  weather get updated 
+              // on referesh  weather get updated
             });
           },
         ),
@@ -238,8 +269,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-
-// Text Fields of App Bar 
+// Text Fields of App Bar
   Column appData() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -247,7 +277,7 @@ class _HomeState extends State<Home> {
       children: [
         Text(
           time.toString(),
-          // time 
+          // time
           style: smallText,
         ),
         SizedBox(height: 7),
@@ -270,7 +300,7 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-        ), 
+        ),
       ],
     );
   }

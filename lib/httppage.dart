@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-import 'package:dioapi/Const/constants.dart';
+// import 'package:dioapi/Content/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'Content/Constants.dart';
 
 
 
@@ -53,11 +55,11 @@ class _HttpPageState extends State<HttpPage> {
               children: [
                 Text(
                   location + ', ' + country,
-                  style: customGrey,
+                  style: TextStyle(color: Colors.white),
                 ),
                 Text(
                   temp.toString(),
-                  style: customGrey.copyWith(fontSize: 60),
+                  style: customGrey,
                 ),
                 // like this you can get all the data that you needs
               ],

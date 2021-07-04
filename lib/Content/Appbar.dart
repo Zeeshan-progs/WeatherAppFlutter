@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'Constants.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather/Content/Constants.dart';
 
 bool value = false;
 void onChanged(bool value) {

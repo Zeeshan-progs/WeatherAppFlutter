@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'DioPackage.dart';
 import 'HomePage.dart';
 
 void main() {
   runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -13,9 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: ' Weather App',
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: Home(),
     );
   }
 }
-
-
